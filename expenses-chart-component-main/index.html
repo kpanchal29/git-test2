@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <title>Frontend Mentor | Expenses chart component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <style>
+    .attribution { font-size: 11px; text-align: center; }
+    .attribution a { color: hsl(228, 45%, 44%); }
+    .magic3 { background-color: hsl(33, 100%, 98%); }
+    .magic2 { background-color: hsl(10, 79%, 65%); }
+    .magic { background-color: hsl(27, 66%, 92%); }
+    html, body { height: 100%; }
+    .wednesday { background-color: hsl(186, 34%, 60%) !important; }
+  </style>
+</head>
+<body class="magic flex justify-center items-center">
+  <div class="">
+    <div class="">
+      <div class="flex flex-col sm:gap-5 gap-3">
+        <div class="magic2 rounded-2xl p-2 flex sm:p-3 w-72 justify-between sm:w-96"> 
+          <div>
+            <div class="text-white text-sm">My balance</div>
+            <div class="text-white text-2xl font-semibold">$921.48</div>
+          </div class="magic2">
+          <img src="images/logo.svg"/>
+        </div>
+        <div class="magic3 sm:h-96 h-80 w-72 sm:w-96 rounded-2xl">
+          <h1 class="font-semibold sm:p-4 text-2xl p-4">Spending - Last 7 days</h1>
+          <div class="p-5">
+            <canvas id="mychart"></canvas>
+          </div>
+        <div class="h-0.5 sm:w-80 bg-black opacity-5 sm:mx-auto  mx-6">
+        </div>
+        <div class="flex">
+          <div class="p-5 flex flex-col">
+            <h1 class="opacity-40 text-sm sm:text-xl">Total this month</h1>
+            <p class="sm:text-4xl text-2xl">$478.33</p>
+          </div>
+          <div class="mt-8 sm:ml-12">
+            <p class="text-right font-semibold sm:text-xl ">+2.4%</p>
+            <p class="opacity-45">from last month</p>
+          </div>
+        </div>
+        </div>
+        <!-- Add your other content here -->
+      </div>
+    </div>
+  </div>
+  <script>
+    // Function to fetch data and create the chart
+    async function fetchDataAndCreateChart() {
+      try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+
+        const labels = data.map(item => item.day);
+        const values = data.map(item => item.amount);
+        const backgroundColors = data.map(item => item.day === 'Wed' ? 'hslhsl(186, 34%, 60%)' : 'hsl(10, 79%, 65%)');
+
+        const ctx = document.getElementById('mychart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Spending',
+              data: values,
+              backgroundColor: backgroundColors,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                display: false, // Hides the y-axis
+                grid: {
+                  display: false // Hides the x-axis grid lines
+                }
+              },
+              x: {
+                grid: {
+                  display: false // Hides the x-axis grid lines
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false // Hides the legend
+              }
+            },
+            elements: {
+              bar: {
+                borderSkipped: false, // Removes the bottom border of the bars
+                hoverBackgroundColor: function(context) {
+                  return context.raw === values[2] ? 'hsl(186, 34%, 60%)' : 'hsl(186, 34%, 60%)';
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching the data', error);
+      }
+    }
+
+    // Call the function to fetch data and create the chart
+    fetchDataAndCreateChart();
+  </script>
+</body>
+</html>
